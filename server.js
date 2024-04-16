@@ -9,7 +9,7 @@ import jwtStrategy from "./config/jwt.js";
 dotenv.config();
 
 const PORT = 3000;
-const DB = process.env.MONGODB_URL;
+const DB = process.env.DB_URL;
 
 const app = express();
 app.use(express.json());
@@ -22,7 +22,6 @@ app.use("/api", api);
 app.listen(PORT, async () => {
   try {
     console.log("Connecting to MongoDB...");
-    //await mongoose.connect(DB);
     await mongoose.connect(DB);
     console.log(chalk.magenta(`MongoDB connected, port: ${PORT}`));
   } catch (error) {

@@ -7,4 +7,9 @@ wyszukiwanie uzytkownika w bazie danych i weryfikacja jego hasla
 losowe 32 znaki 
 openssl rand -hex 16
 
+access token ma okreslona zywotnosc, aby uniknac ponownego logowania po uplywie jego zycia uzywamy refresh token (poprawia UX)
+refresh token wydawany jest razem z logowaniem, loguje bez udzialu klienta
+
 bearer token - token na okaziciela, strategia autoryzacji, funkcja middleware
+
+OAuth - alternatywa -> zaloguj sie za pomoca np google

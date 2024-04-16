@@ -14,6 +14,7 @@ function authMiddleware(req, res, next) {
 
 export default authMiddleware;
 
+// HOF - Higher Order Function (return another function)
 /* const foo = (a) => {
   return (b) => {
     return a + b;

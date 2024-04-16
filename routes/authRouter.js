@@ -35,13 +35,61 @@ router.post("/login", async (req, res) => {
     const payload = { id: user._id, username: user.username };
 
     // podpisanie tokena
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "12h",
+    const accessToken = jwt.sign(payload, process.env.SECRET, {
+      //expiresIn: "40s", // czas do testow
+      expiresIn: "12h", //legitny czas
     });
-    return res.status(200).json({ token });
+    const refreshToken = jwt.sign(payload, process.env.REFRESH_SECRET, {
+      expiresIn: "30d",
+    });
+    return res.json({ accessToken, refreshToken });
   } else {
     return res.status(401).json({ message: "Invalid password" });
   }
+});
+
+router.post("/refresh-token", async (req, res) => {
+  const refreshToken = req.headers.authorization;
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: "Token missing" });
+  }
+
+  // oddzielamy slowo "Bearer" od tokena i zapisujemy sam token
+  const splitToken = refreshToken.split(" ")[1];
+
+  jwt.verify(
+    splitToken,
+    process.env.REFRESH_SECRET,
+    async (error, decodedToken) => {
+      console.log("decodedToken:", decodedToken);
+      if (error) {
+        // jesli token jest niepoprawny, ktos przy nim "grzebal"
+        return res.status(403).json({ message: "Invalid token" });
+      }
+
+      const user = await User.findOne({ _id: decodedToken.id });
+      if (!user) {
+        return res.status(401).json({ message: "No such user" });
+      }
+
+      //tworzymy nowy payload - obiekt ktory zapiszemy w tokenie
+      const payload = { id: user._id, username: user.username };
+
+      // na nowo tworzymy short token i podpisujemy token
+      const accessToken = jwt.sign(payload, process.env.SECRET, {
+        //expiresIn: "40s", // czas do testow
+        expiresIn: "12h", //czas legitny
+      });
+
+      const refreshToken = jwt.sign(payload, process.env.REFRESH_SECRET, {
+        // user nie bedzie musial sie logowac ponownie przez 30 dni
+        expiresIn: "30d",
+      });
+
+      return res.status(200).json({ accessToken, refreshToken });
+    }
+  );
 });
 
 export default router;
