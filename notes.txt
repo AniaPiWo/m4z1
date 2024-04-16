@@ -1,0 +1,10 @@
+1. authorization autoryzacja 
+udowodnienei serwerowi, ze klient wysylajacy zapytanie do api jest uprawniony zeby dostac zasoby z serwera
+
+2. authentication uwierzytelnienie
+wyszukiwanie uzytkownika w bazie danych i weryfikacja jego hasla
+
+losowe 32 znaki 
+openssl rand -hex 16
+
+bearer token - token na okaziciela, strategia autoryzacji, funkcja middleware
